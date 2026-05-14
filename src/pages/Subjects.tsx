@@ -117,7 +117,7 @@ export default function Subjects() {
                 <div key={subject.id} className="bg-white rounded-xl border border-gray-100 p-5">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: subject.color }} />
+                      <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: subject.color }} />
                       <p className="font-medium text-gray-900 text-sm">{subject.name}</p>
                     </div>
                     <div className="flex items-center gap-1">
