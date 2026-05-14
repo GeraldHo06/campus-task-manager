@@ -154,13 +154,25 @@ export default function Dashboard() {
                 <div className="flex flex-col gap-2">
                   {subjects.map(subject => {
                     const count = tasks.filter(t => t.subject_id === subject.id && !t.completed).length
+                    const total = tasks.filter(t => t.subject_id === subject.id).length
+                    const completed = tasks.filter(t => t.subject_id === subject.id && t.completed).length
+                    const percent = total === 0 ? 0 : Math.round((completed / total) * 100)
+
                     return (
-                      <div key={subject.id} className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50">
-                        <div className="flex items-center gap-2">
-                          <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: subject.color }} />
-                          <span className="text-sm text-gray-700">{subject.name}</span>
+                      <div key={subject.id} className="p-2 rounded-lg hover:bg-gray-50">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: subject.color }} />
+                            <span className="text-sm text-gray-700">{subject.name}</span>
+                          </div>
+                          <span className="text-xs text-gray-400">{completed}/{total}</span>
                         </div>
-                        <span className="text-xs text-gray-400">{count} active</span>
+                        <div className="w-full bg-gray-100 rounded-full h-1.5">
+                          <div
+                            className="h-1.5 rounded-full transition-all"
+                            style={{ width: `${percent}%`, backgroundColor: subject.color }}
+                          />
+                        </div>
                       </div>
                     )
                   })}

@@ -127,6 +127,20 @@ export default function Tasks() {
     if (filterStatus === 'overdue' && !isOverdue(t.due_date, t.completed)) return false
     return true
   })
+  .sort((a, b) => {
+    // Completed tasks go to bottom
+    if (a.completed !== b.completed) return a.completed ? 1 : -1
+    // Overdue first
+    const aOverdue = isOverdue(a.due_date, a.completed)
+    const bOverdue = isOverdue(b.due_date, b.completed)
+    if (aOverdue !== bOverdue) return aOverdue ? -1 : 1
+    // Then by due date ascending
+    if (a.due_date && b.due_date) return new Date(a.due_date).getTime() - new Date(b.due_date).getTime()
+    if (a.due_date) return -1
+    if (b.due_date) return 1
+    // No due date — by created_at descending
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  })
 
   const getSubject = (id: string | null) => subjects.find(s => s.id === id)
 
