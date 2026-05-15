@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabaseClient'
 import type { Task, Subject } from '../types'
 import Sidebar from '../components/layout/sidebar'
 import TopBar from '../components/layout/TopBar'
+import { useNotifications } from '../hooks/useNotifications'
 
 function isOverdue(due_date: string | null, completed: boolean) {
   if (!due_date || completed) return false
@@ -21,6 +22,8 @@ export default function Dashboard() {
   const [subjects, setSubjects] = useState<Subject[]>([])
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
+
+  useNotifications(tasks)
 
   useEffect(() => {
     async function fetchAll() {
@@ -153,7 +156,6 @@ export default function Dashboard() {
               ) : (
                 <div className="flex flex-col gap-2">
                   {subjects.map(subject => {
-                    const count = tasks.filter(t => t.subject_id === subject.id && !t.completed).length
                     const total = tasks.filter(t => t.subject_id === subject.id).length
                     const completed = tasks.filter(t => t.subject_id === subject.id && t.completed).length
                     const percent = total === 0 ? 0 : Math.round((completed / total) * 100)

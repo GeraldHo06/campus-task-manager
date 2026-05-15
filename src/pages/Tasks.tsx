@@ -135,12 +135,21 @@ export default function Tasks() {
     const bOverdue = isOverdue(b.due_date, b.completed)
     if (aOverdue !== bOverdue) return aOverdue ? -1 : 1
     // Then by due date ascending
-    if (a.due_date && b.due_date) return new Date(a.due_date).getTime() - new Date(b.due_date).getTime()
-    if (a.due_date) return -1
-    if (b.due_date) return 1
-    // No due date — by created_at descending
-    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-  })
+    if (a.due_date && b.due_date) {
+    const dateDiff = new Date(a.due_date).getTime() - new Date(b.due_date).getTime()
+    if (dateDiff !== 0) return dateDiff
+    // Same due date — sort by priority
+    const priorityOrder = { high: 0, medium: 1, low: 2 }
+    return priorityOrder[a.priority] - priorityOrder[b.priority]
+  }
+  if (a.due_date) return -1
+  if (b.due_date) return 1
+  // No due date — by priority first, then created_at
+  const priorityOrder = { high: 0, medium: 1, low: 2 }
+  const priorityDiff = priorityOrder[a.priority] - priorityOrder[b.priority]
+  if (priorityDiff !== 0) return priorityDiff
+  return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+})
 
   const getSubject = (id: string | null) => subjects.find(s => s.id === id)
 

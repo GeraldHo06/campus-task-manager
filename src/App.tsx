@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard'
 import Subjects from './pages/Subjects'
 import Tasks from './pages/Tasks'
 import ProtectedRoute from './components/ProtectedRoute'
+import Calendar from './pages/Calendar'
 
 function App() {
   return (
@@ -18,6 +19,9 @@ function App() {
         } />
         <Route path="/tasks" element={
           <ProtectedRoute><Tasks /></ProtectedRoute>
+        } />
+        <Route path="/calendar" element={
+          <ProtectedRoute><Calendar /></ProtectedRoute>
         } />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
