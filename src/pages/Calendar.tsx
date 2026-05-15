@@ -65,7 +65,7 @@ export default function Calendar() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Sidebar />
-      <div className="ml-60">
+      <div className="lg:ml-60">
         <TopBar title="Calendar" />
         <main className="pt-16 p-6">
           <div className="grid grid-cols-3 gap-4">

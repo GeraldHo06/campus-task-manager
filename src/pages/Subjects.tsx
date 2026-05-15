@@ -87,7 +87,7 @@ export default function Subjects() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Sidebar />
-      <div className="ml-60">
+      <div className="lg:ml-60">
         <TopBar title="Subjects" />
         <main className="pt-16 p-6">
 
@@ -115,27 +115,30 @@ export default function Subjects() {
             <div className="grid grid-cols-3 gap-4">
               {subjects.map(subject => (
                 <div key={subject.id} className="bg-white rounded-xl border border-gray-100 p-5">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: subject.color }} />
-                      <p className="font-medium text-gray-900 text-sm">{subject.name}</p>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <button
-                        onClick={() => openEdit(subject)}
-                        className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
-                      >
-                        <Pencil size={14} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(subject.id)}
-                        className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: subject.color }} />
+                    <p className="font-medium text-gray-900 text-sm">{subject.name}</p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => openEdit(subject)}
+                      className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                    >
+                      <Pencil size={14} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(subject.id)}
+                      className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      <Trash2 size={14} />
+                    </button>
                   </div>
                 </div>
+                <p className="text-xs text-gray-400 mt-3 px-0.5">
+                  Created {new Date(subject.created_at).toLocaleDateString('en-MY', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </p>
+              </div>
               ))}
             </div>
           )}

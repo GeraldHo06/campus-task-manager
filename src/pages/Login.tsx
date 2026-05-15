@@ -12,21 +12,32 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
 
   async function handleSubmit() {
-    setError('')
-    setLoading(true)
+  setError('')
 
-    const { error } = isSignUp
-      ? await supabase.auth.signUp({ email, password })
-      : await supabase.auth.signInWithPassword({ email, password })
-
-    if (error) {
-      setError(error.message)
-    } else {
-      navigate('/dashboard')
-    }
-
-    setLoading(false)
+  if (isSignUp && password.length < 8) {
+    setError('Password must be at least 8 characters')
+    return
   }
+
+  if (!email.trim()) {
+    setError('Email is required')
+    return
+  }
+
+  setLoading(true)
+
+  const { error } = isSignUp
+    ? await supabase.auth.signUp({ email, password })
+    : await supabase.auth.signInWithPassword({ email, password })
+
+  if (error) {
+    setError(error.message)
+  } else {
+    navigate('/dashboard')
+  }
+
+  setLoading(false)
+}
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">

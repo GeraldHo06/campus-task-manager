@@ -56,7 +56,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Sidebar />
-      <div className="ml-60">
+      <div className="lg:ml-60">
         <TopBar title="Dashboard" />
         <main className="pt-16 p-6">
 
