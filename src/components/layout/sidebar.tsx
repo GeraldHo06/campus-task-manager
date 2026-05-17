@@ -1,23 +1,58 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { LayoutDashboard, BookOpen, CheckSquare, Calendar, Settings, LogOut, Menu, X } from 'lucide-react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabaseClient'
 
-const navItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', to: '/dashboard' },
-  { icon: BookOpen, label: 'Subjects', to: '/subjects' },
-  { icon: CheckSquare, label: 'Tasks', to: '/tasks' },
-  { icon: Calendar, label: 'Calendar', to: '/calendar' },
-]
+function isOverdue(due_date: string | null, completed: boolean) {
+  if (!due_date || completed) return false
+  return new Date(due_date) < new Date(new Date().toDateString())
+}
 
 export default function Sidebar() {
   const navigate = useNavigate()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [activeTasks, setActiveTasks] = useState(0)
+  const [overdueTasks, setOverdueTasks] = useState(0)
+
+  useEffect(() => {
+    async function fetchCounts() {
+      const { data } = await supabase
+        .from('tasks')
+        .select('completed, due_date')
+      if (!data) return
+      setActiveTasks(data.filter(t => !t.completed).length)
+      setOverdueTasks(data.filter(t => isOverdue(t.due_date, t.completed)).length)
+    }
+
+    fetchCounts()
+
+    const channel = supabase
+      .channel('tasks-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'tasks' },
+        () => { fetchCounts() }
+      )
+      .subscribe()
+
+    return () => { supabase.removeChannel(channel) }
+  }, [])
 
   async function handleLogout() {
     await supabase.auth.signOut()
     navigate('/login')
   }
+
+  const navItems = [
+    { icon: LayoutDashboard, label: 'Dashboard', to: '/dashboard' },
+    { icon: BookOpen, label: 'Subjects', to: '/subjects' },
+    {
+      icon: CheckSquare, label: 'Tasks', to: '/tasks',
+      badge: activeTasks > 0 ? activeTasks : null,
+      badgeRed: overdueTasks > 0,
+    },
+    { icon: Calendar, label: 'Calendar', to: '/calendar' },
+  ]
 
   const sidebarContent = (
     <>
@@ -35,7 +70,7 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex flex-col gap-1 flex-1">
-        {navItems.map(({ icon: Icon, label, to }) => (
+        {navItems.map(({ icon: Icon, label, to, badge, badgeRed }) => (
           <NavLink
             key={to}
             to={to}
@@ -49,12 +84,28 @@ export default function Sidebar() {
             }
           >
             <Icon size={18} />
-            {label}
+            <span className="flex-1">{label}</span>
+            {badge && (
+              <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                badgeRed
+                  ? 'bg-red-100 text-red-600'
+                  : 'bg-indigo-100 text-indigo-600'
+              }`}>
+                {badge}
+              </span>
+            )}
           </NavLink>
         ))}
       </nav>
 
       <div className="border-t border-gray-100 pt-4 flex flex-col gap-1">
+        {overdueTasks > 0 && (
+          <div className="flex items-center gap-2 px-3 py-2 mb-1 bg-red-50 rounded-lg">
+            <span className="text-xs text-red-500 font-medium">
+              {overdueTasks} overdue task{overdueTasks > 1 ? 's' : ''}
+            </span>
+          </div>
+        )}
         <NavLink
           to="/settings"
           onClick={() => setMobileOpen(false)}
@@ -76,12 +127,10 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Desktop sidebar */}
       <aside className="hidden lg:flex h-screen w-60 bg-white border-r border-gray-100 flex-col px-4 py-6 fixed left-0 top-0">
         {sidebarContent}
       </aside>
 
-      {/* Mobile hamburger button */}
       <button
         onClick={() => setMobileOpen(true)}
         className="lg:hidden fixed top-4 left-4 z-40 p-2 bg-white rounded-lg border border-gray-200 text-gray-600 shadow-sm"
@@ -89,7 +138,6 @@ export default function Sidebar() {
         <Menu size={18} />
       </button>
 
-      {/* Mobile overlay */}
       {mobileOpen && (
         <div
           className="lg:hidden fixed inset-0 bg-black/40 z-40"
@@ -97,7 +145,6 @@ export default function Sidebar() {
         />
       )}
 
-      {/* Mobile drawer */}
       <aside className={`lg:hidden fixed top-0 left-0 h-screen w-60 bg-white border-r border-gray-100 flex flex-col px-4 py-6 z-50 transition-transform duration-200 ${
         mobileOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>

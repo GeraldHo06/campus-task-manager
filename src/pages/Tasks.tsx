@@ -29,6 +29,7 @@ export default function Tasks() {
   const [editingTask, setEditingTask] = useState<Task | null>(null)
   const [filterSubject, setFilterSubject] = useState<string>('all')
   const [filterStatus, setFilterStatus] = useState<string>('all')
+  const [search, setSearch] = useState('')
 
   // form state
   const [title, setTitle] = useState('')
@@ -121,6 +122,7 @@ export default function Tasks() {
   }
 
   const filteredTasks = tasks.filter(t => {
+    if (search && !t.title.toLowerCase().includes(search.toLowerCase())) return false
     if (filterSubject !== 'all' && t.subject_id !== filterSubject) return false
     if (filterStatus === 'active' && t.completed) return false
     if (filterStatus === 'completed' && !t.completed) return false
@@ -162,38 +164,45 @@ export default function Tasks() {
 
           {/* Filters + Add button */}
           <div className="flex items-center justify-between mb-6 gap-4">
-            <div className="flex items-center gap-3">
-              <select
-                value={filterSubject}
-                onChange={e => setFilterSubject(e.target.value)}
-                className="px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-600 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              >
-                <option value="all">All Subjects</option>
-                {subjects.map(s => (
-                  <option key={s.id} value={s.id}>{s.name}</option>
-                ))}
-              </select>
-
-              <select
-                value={filterStatus}
-                onChange={e => setFilterStatus(e.target.value)}
-                className="px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-600 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              >
-                <option value="all">All Status</option>
-                <option value="active">Active</option>
-                <option value="completed">Completed</option>
-                <option value="overdue">Overdue</option>
-              </select>
-            </div>
-
-            <button
-              onClick={openCreate}
-              className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
+          <div className="flex items-center gap-3">
+            <input
+              type="text"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search tasks..."
+              className="px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-600 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 w-48"
+            />
+            <select
+              value={filterSubject}
+              onChange={e => setFilterSubject(e.target.value)}
+              className="px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-600 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
-              <Plus size={16} />
-              New Task
-            </button>
+              <option value="all">All Subjects</option>
+              {subjects.map(s => (
+                <option key={s.id} value={s.id}>{s.name}</option>
+              ))}
+            </select>
+
+            <select
+              value={filterStatus}
+              onChange={e => setFilterStatus(e.target.value)}
+              className="px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-600 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option value="all">All Status</option>
+              <option value="active">Active</option>
+              <option value="completed">Completed</option>
+              <option value="overdue">Overdue</option>
+            </select>
           </div>
+
+          <button
+            onClick={openCreate}
+            className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
+          >
+            <Plus size={16} />
+            New Task
+          </button>
+        </div>
 
           {/* Task list */}
           {loading ? (
