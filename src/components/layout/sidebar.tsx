@@ -58,7 +58,7 @@ export default function Sidebar() {
     <>
       <div className="mb-8 px-2 flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-gray-900">CampusTask</h1>
+          <h1 className="text-lg font-semibold text-gray-900">UniTrack</h1>
           <p className="text-xs text-gray-400 mt-0.5">Stay on top of your work</p>
         </div>
         <button

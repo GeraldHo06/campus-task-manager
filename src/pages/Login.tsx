@@ -46,8 +46,8 @@ export default function Login() {
           <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center mb-3">
             <BookOpen size={22} className="text-white" />
           </div>
-          <h1 className="text-lg font-semibold text-gray-900">CampusTask</h1>
-          <p className="text-sm text-gray-400">Manage your academic life</p>
+          <h1 className="text-lg font-semibold text-gray-900">UniTrack</h1>
+          <p className="text-sm text-gray-400">Stay organized. Stay ahead.</p>
         </div>
 
         <h2 className="text-xl font-semibold text-gray-900 mb-6">
